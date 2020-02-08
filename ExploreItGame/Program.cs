@@ -31,7 +31,6 @@ namespace Hello
         else
         {         
           IntPtr renderer = SDL.SDL_CreateRenderer(window, -1, SDL.SDL_RendererFlags.SDL_RENDERER_ACCELERATED);
-          SDL.SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
           SDL_image.IMG_Init(SDL_image.IMG_InitFlags.IMG_INIT_PNG);
 
           GameState state = new GameState() { running = true };
