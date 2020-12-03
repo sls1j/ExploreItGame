@@ -12,20 +12,35 @@ namespace GameEngine.Nouns
     public int y;
     public int w;
     public int h;
-    public dynamic other;
+    public IntPtr rend;
 
     public int xc => (x + (w >> 1));
     public int yc => (y + (h >> 1));
 
+    public Drawable()
+    {
 
-    public OnDrawHandler Draw;
-    public OnEventHandler OnEvent;
-    public OnGameState OnState;
+    }
+
+    public Drawable(int x, int y, int w, int h)
+    {
+      this.x = x;
+      this.y = y;
+      this.w = w;
+      this.h = h;
+    }
+
+
+    public OnInit Init = rend => { };
+    public OnDrawHandler OnDraw = rend => { };
+    public OnEventHandler OnEvent = (evt, g) => { };
+    public OnGameState OnState = g => { };
+    public SDL.SDL_SystemCursor Cursor;
 
     public static bool Within(Drawable d, int px, int py)
     {
       return (px >= d.x && px <= (d.x + d.w) && py >= d.y && py <= (d.y + d.h));
-    }
+    }    
 
     public static Collision CollisionTest(Drawable r1, Drawable r2)
     {

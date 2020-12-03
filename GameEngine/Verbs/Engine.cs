@@ -41,35 +41,22 @@ namespace GameEngine.Verbs
         }
         else
         {
+          SDL_ttf.TTF_Init();
           IntPtr rend = SDL.SDL_CreateRenderer(window, -1, SDL.SDL_RendererFlags.SDL_RENDERER_ACCELERATED);
           SDL.SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
           SDL_image.IMG_Init(SDL_image.IMG_InitFlags.IMG_INIT_PNG);
 
           onInit(rend);
-
-          Action<SDL.SDL_SystemCursor> setCursor = cursor =>
-          {
-            IntPtr oc = SDL.SDL_GetCursor();
-            IntPtr nc = SDL.SDL_CreateSystemCursor(cursor);
-            SDL.SDL_SetCursor(nc);
-            if (oc != null)
-              SDL.SDL_FreeCursor(oc);
-          };
-
+         
           const int frameRate = 60;
           const int frameDelay = 1000 / frameRate;
 
           uint lastTime = SDL.SDL_GetTicks();
           uint time = lastTime;
           Globals glob = new Globals();
-          glob.cursor = SDL.SDL_SystemCursor.SDL_SYSTEM_CURSOR_ARROW;
-
-          Globals oldGlob = new Globals();
-          oldGlob.cursor = SDL.SDL_SystemCursor.SDL_SYSTEM_CURSOR_ARROW;
 
           while (isRunning())
           {
-            glob.cursor = SDL.SDL_SystemCursor.SDL_SYSTEM_CURSOR_ARROW;
 
             uint frameStart = SDL.SDL_GetTicks();
             lastTime = time;
@@ -90,12 +77,6 @@ namespace GameEngine.Verbs
             }
 
             onState(glob);
-
-            if (glob.cursor != oldGlob.cursor)
-            {
-              setCursor(glob.cursor);
-              oldGlob.cursor = glob.cursor;
-            }
 
             SDL.SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
             SDL.SDL_RenderClear(rend);

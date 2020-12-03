@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
+using LevelEditor.Nouns;
+using GameEngine.GUI.Controls;
 
 namespace LevelEditor
 {
@@ -15,16 +17,17 @@ namespace LevelEditor
     {
       bool isRunning = true;
 
-      List<Drawable> buttons = new List<Drawable>();
 
+      GUI gui = new GUI();
+      Map map;
       void init(IntPtr rend)
       {
-        MakeButtons(rend, buttons);
+        MakeButtons(rend, gui.AddDrawable, m => map = m);
       }
 
       void eventHandler(SDL.SDL_Event e, Globals g)
       {
-        buttons.ForEach(b => b.OnEvent(e,g));
+        gui.HandleEvents(e, g);
 
         if (e.type == SDL.SDL_EventType.SDL_QUIT)
         {
@@ -34,23 +37,23 @@ namespace LevelEditor
 
       void updateState(Globals g)
       {
-        buttons.ForEach(b => b.OnState(g));
+        gui.UpdateState(g);
       }
 
       void draw(IntPtr rend)
       {
-        buttons.ForEach(b => b.Draw(rend));
+        gui.Draw(rend);
       }
 
       Engine.Run("Level Editor", () => isRunning, init, eventHandler, updateState, draw);
     }
 
-    private static void MakeButtons(IntPtr rend, List<Drawable> buttons, )
+    private static void MakeButtons(IntPtr rend, Action<Drawable> addDrawable, Action<Map> setMap )
     {
       Sprite buttonSprite = Draw.LoadSprite(rend, "buttons", "buttons.png");
       int c = 0;
       int x = 4;
-      buttons.Add(Button.Create(x, 4, buttonSprite.New("loadMap").AddState(c * 100, 0, 100, 26).AddState(c * 100 + 100, 0, 100, 26), d =>
+      addDrawable(new Button(rend, x, 4, buttonSprite.New("loadMap").AddState(c * 100, 0, 100, 26).AddState(c * 100 + 100, 0, 100, 26), d =>
       {
         string mapFile;
         if ( Dialogs.OpenFileDialog("Select map.", Directory.GetCurrentDirectory(), "*.map", out mapFile))
@@ -61,17 +64,19 @@ namespace LevelEditor
 
       x += 102;
       c = 4;
-      buttons.Add(Button.Create(x, 4, buttonSprite.New("saveMap").AddState(c * 100, 0, 100, 26).AddState(c * 100 + 100, 0, 100, 26), d =>
+      addDrawable(new Button(rend, x, 4, buttonSprite.New("saveMap").AddState(c * 100, 0, 100, 26).AddState(c * 100 + 100, 0, 100, 26), d =>
       {
 
       }));
 
       x += 106;
       c = 2;
-      buttons.Add(Button.Create(x, 4, buttonSprite.New("loadSprite").AddState(c * 100, 0, 100, 26).AddState(c * 100 + 100, 0, 100, 26), d =>
+      addDrawable(new Button(rend, x, 4, buttonSprite.New("loadSprite").AddState(c * 100, 0, 100, 26).AddState(c * 100 + 100, 0, 100, 26), d =>
       {
 
       }));
+
+      addDrawable(new Label(rend, "This is a test", 24, 30));
     }
   }
 }

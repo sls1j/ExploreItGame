@@ -64,9 +64,7 @@ namespace GameEngine.Verbs
         string fontPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "font.ttf");
         if (!File.Exists(fontPath))
           Console.WriteLine("No font!");
-
-        IntPtr font = SDL_ttf.TTF_OpenFont(fontPath, size);        
-
+        IntPtr font = SDL_ttf.TTF_OpenFont(fontPath, size);
         SDL.SDL_Surface* s = (SDL.SDL_Surface*)SDL_ttf.TTF_RenderText_Shaded(font, text, foreground, background);
         IntPtr texture = SDL.SDL_CreateTextureFromSurface(renderer, (IntPtr)s);
 
@@ -84,11 +82,15 @@ namespace GameEngine.Verbs
       }
     }
 
-    public static void DrawRect(IntPtr renderer, int x, int y, int w, int h, SDL.SDL_Color color)
+    public static void DrawRect(IntPtr renderer, int x, int y, int w, int h, SDL.SDL_Color color, bool fill = true)
     {
       SDL.SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
       var rect = MakeRect(x, y, w, h);
-      SDL.SDL_RenderFillRect(renderer, ref rect);
+
+      if (fill)
+        SDL.SDL_RenderFillRect(renderer, ref rect);
+      else
+        SDL.SDL_RenderDrawRect(renderer, ref rect);
     }
 
     public static Sprite LoadSprite(IntPtr rend, string name, string filename)
@@ -101,6 +103,13 @@ namespace GameEngine.Verbs
         image = texture,
       };      
       return d;
+    }
+
+    public static void RenderSprite(IntPtr rend, Sprite s, int x, int y, int state)
+    {
+      SDL.SDL_Rect src = s.src[state];
+      SDL.SDL_Rect dst = new SDL.SDL_Rect() { x = x, y = y, w = src.w, h = src.h };
+      SDL.SDL_RenderCopy(rend, s.image, ref src, ref dst);
     }
   }
 }

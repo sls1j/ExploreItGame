@@ -7,6 +7,6 @@ namespace GameEngine.Nouns
 {
   public class Globals
   {
-    public SDL.SDL_SystemCursor cursor;
+    public uint time;
   }
 }
